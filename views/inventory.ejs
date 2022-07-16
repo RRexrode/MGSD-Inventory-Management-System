@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MGSD Technology Inventory System</title>
+    <link rel="stylesheet" href="../stylesheet.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+</head>
+
+<div class="topnav">
+    <div class="dropdown">
+        <button class="dropbtn">Storage Room
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="/">Storage Room</a>
+            <a href="/officeItems">Office Supplies</a>
+        </div>
+    </div>
+    <a href="/additem">Add Item</a>
+    <a href="/updateItem">Update Item</a>
+    <a href="/quickAdd">Quick Add</a>
+    <a href="/quickTake">Quick Take</a>
+    <a href="/deleteItem">Delete Item</a>
+    <a href="/printMode">Print Mode</a>
+    <a class="active" href="/inventory">Inventory Mode</a>
+    <a href="/logout">Logout</a>
+    <a class="navbar-brand" href="#" style="max-width: 10%;">
+        <img src="logo-mooresville.png" class="img-fluid">
+    </a>
+</div>
+
+<h1 class="center">Inventory Mode</h1>
+
+<form action="/inventoryUpdate" method="POST" class = "center" id="myform">
+    <div id="results"></div>
+    <br>
+    <label for="num">Change Count To</label>
+    <input id="num" name="num" type="number" aria-required="true">
+    <label for="asset">Current Asset Number</label>
+    <input id="asset" name="asset" type="text" aria-required="true" placeholder="Enter Asset Number">
+    <input type="submit" value="Next" id="nextquestion" onclick="someFunc()">
+    <input type="submit" value="Submit">
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var questionStack = [];
+        <% data.forEach(entry => { %>
+        questionStack.push( ["NAME: " + <%- JSON.stringify(entry.name) %>, " | LOCATION: " + <%- JSON.stringify(entry.location) %>, " | COUNT: " + <%- JSON.stringify(entry.count) %>, " | ASSET: " + <%- JSON.stringify(entry.asset) %>])
+        <%}) %>
+        $('#nextquestion').click(function() {
+            $('#results').html(questionStack.pop());
+        });
+    });
+</script>
+
+<script>
+    $(function() {
+        $("#myform").on("submit", function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr("action"),
+                type: 'POST',
+                data: $(this).serialize(),
+                beforeSend: function() {
+                    $("#message").html("sending...");
+                },
+                success: function(data) {
+                    $("#message").hide();
+                    $("#response").html(data);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function someFunc() {
+        document.getElementById('asset').value = '';
+        document.getElementById('num').value = '';
+    }
+</script>
+</body>
+
+
+</body>
+</html>

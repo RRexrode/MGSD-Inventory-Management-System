@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MGSD Technology Inventory System</title>
+    <link rel="stylesheet" href="../stylesheet.css">
+    <style>
+        .row:nth-of-type(odd) {
+            background-color:#ccc;
+        }
+    </style>
+
+</head>
+
+<div class="topnav">
+    <div class="dropdown">
+        <button class="dropbtn" class="largeText">Storage Room
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="/">Storage Room</a>
+            <a href="/officeItems">Office Supplies</a>
+        </div>
+    </div>
+    <a href="/additem">Add Item</a>
+    <a href="/updateItem">Update Item</a>
+    <a href="/quickAdd">Quick Add</a>
+    <a href="/quickTake">Quick Take</a>
+    <a href="/deleteItem">Delete Item</a>
+    <a href="/printMode">Print Mode</a>
+    <a href="/inventory">Inventory Mode</a>
+    <a href="/logout">Logout</a>
+    <a class="navbar-brand" style="max-width: 10%;">
+        <img src="logo-mooresville.png" class="img-fluid">
+    </a>
+</div>
+
+<body>
+<br>
+
+<form method='GET' action="/search">
+    <div class="container">
+        <div class="right-pane">
+            <input type="text" id="name" name="name" />
+        </div>
+    </div>
+    <div class="submit-name">
+        <input type="submit" value="Search Item Name" />
+    </div>
+    </div>
+</form>
+<br>
+<div class="row1">
+    <div class="column1">
+        <form method='GET' action="/showCategory">
+            <label for="oneCategory">Category:</label>
+            <select id="oneCategory" name="oneCategory">
+                <option value ="Audio/Video">Audio/Video</option>
+                <option value ="Network">Network</option>
+                <option value ="Misc Cabling/Cables">Misc Cabling/Cables</option>
+                <option value ="Macbook">Macbook</option>
+                <option value ="Switch/Server">Switch/Server</option>
+                <option value ="Phone">Phone</option>
+                <option value ="N/A">N/A</option>
+                <option value ="Desktops">Desktops</option>
+                <option value ="Printers">Printers
+                <option value ="ATV/iPad">ATV/iPad</option>
+                <option value ="Accessories/Consumables">Accessories/Consumables</option>
+                <option value ="Phone">Phone</option>
+                <option value ="Accessories">Accessories</option>
+                <option value ="E-RATE">E-RATE</option>
+            </select>
+            <input type="submit">
+        </form>
+    </div>
+    <div class="column1">
+        <form method='GET' action="/sort">
+            <label for="sort">Sort By:</label>
+            <select id="sort" name="sort">
+                <option value ="category">Category</option>
+                <option value ="name">Name</option>
+                <option value ="asset">Asset Number</option>
+                <option value ="location">Location</option>
+            </select>
+            <input type="submit">
+        </form>
+    </div>
+    <div class="column"></div>
+    <div class="column"></div>
+    <div class="column"></div>
+</div>
+<br>
+<div class="container">
+
+    <div class="row">
+        <div class="column">CATEGORY</div>
+        <div class="column">NAME</div>
+        <div class="column">ASSET NUMBER</div>
+        <div class="column">LOCATION</div>
+        <div class="column">COUNT</div>
+    </div>
+    <hr class="solid">
+    <% data.forEach(entry => { %>
+        <div class="row">
+            <div class="column"><%= entry.category%></div>
+            <div class="column"><%= entry.name%></div>
+            <div class="column"><%= entry.asset%></div>
+            <div class="column"><%= entry.location%></div>
+            <div class="column"><%= entry.count%></div>
+        </div>
+    <%}) %>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MGSD Technology Inventory System</title>
+    <link rel="stylesheet" href="../stylesheet.css">
+</head>
+
+<div class="topnav">
+    <div class="dropdown">
+        <button class="dropbtn">Storage Room
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="/">Storage Room</a>
+            <a href="/officeItems">Office Supplies</a>
+        </div>
+    </div>
+    <a href="/additem">Add Item</a>
+    <a href="/updateItem">Update Item</a>
+    <a class="active" href="/quickAdd">Quick Add</a>
+    <a href="/quickTake">Quick Take</a>
+    <a href="/deleteItem">Delete Item</a>
+    <a href="/printMode">Print Mode</a>
+    <a href="/inventory">Inventory Mode</a>
+    <a href="/logout">Logout</a>
+    <a class="navbar-brand" href="#" style="max-width: 10%;">
+        <img src="logo-mooresville.png" class="img-fluid">
+    </a>
+</div>
+
+<body>
+<br>
+<br>
+<h1 class="center">Quick Add</h1>
+<form action="/addOne" method="POST" class = "center">
+    <label for="asset">Asset Number</label>
+    <input id="asset" name="asset" type="text" aria-required="true" placeholder="Enter Asset Number" autofocus="autofocus">
+    <hr class="solid">
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>

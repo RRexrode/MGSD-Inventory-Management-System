@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MGSD Technology Inventory System</title>
+    <link rel="stylesheet" href="../stylesheet.css">
+</head>
+
+<div class="topnav">
+    <div class="dropdown">
+        <button class="dropbtn">Storage Room
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+            <a href="/">Storage Room</a>
+            <a href="/officeItems">Office Supplies</a>
+        </div>
+    </div>
+    <a class="active" href="/additem">Add Item</a>
+    <a href="/updateItem">Update Item</a>
+    <a href="/quickAdd">Quick Add</a>
+    <a href="/quickTake">Quick Take</a>
+    <a href="/deleteItem">Delete Item</a>
+    <a href="/printMode">Print Mode</a>
+    <a href="/inventory">Inventory Mode</a>
+    <a href="/logout">Logout</a>
+    <a class="navbar-brand" href="#" style="max-width: 10%;">
+        <img src="logo-mooresville.png" class="img-fluid">
+    </a>
+</div>
+
+<body>
+<br>
+<br>
+<h1 class="center">Add Item</h1>
+<form action="/uploadItem" method="POST" class = "center">
+    <label for="category">Category</label>
+    <select id="category" name="category" size="1" multipe>
+        <option value ="Audio/Video">Audio/Video</option>
+        <option value ="Network">Network</option>
+        <option value ="Misc Cabling/Cables">Misc Cabling/Cables</option>
+        <option value ="Macbook">Macbook</option>
+        <option value ="Switch/Server">Switch/Server</option>
+        <option value ="Phone">Phone</option>
+        <option value ="N/A">N/A</option>
+        <option value ="Desktops">Desktops</option>
+        <option value ="Printers">Printers
+        <option value ="ATV/iPad">ATV/iPad</option>
+        <option value ="Accessories/Consumables">Accessories/Consumables</option>
+        <option value ="Phone">Phone</option>
+        <option value ="Accessories">Accessories</option>
+        <option value ="E-RATE">E-RATE</option>
+    </select>
+    <hr class="solid">
+    <label for="name">Item Name</label>
+    <input id="name" name="name" type="text" aria-required="true" placeholder="Enter Item Name">
+    <hr class="solid">
+    <label for="location">Item Location</label>
+    <input id="location" name = "location" type="text" aria-required="true">
+    <hr class="solid">
+    <label for="count">Item Count</label>
+    <input id="count" name="count" type="number" aria-required="true">
+    <hr class="solid">
+    <label for="minimum">Item Minimum</label>
+    <input id="minimum" name="minimum" type="number" aria-required="true">
+    <hr class="solid">
+    <label for="asset">Asset Number</label>
+    <input id="asset" name = "asset" type="text" aria-required="true">
+    <hr class="solid">
+    <input type="submit" value="Upload">
+</form>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MGSD Technology Inventory System</title>
+    <link rel="stylesheet" href="../stylesheet.css">
+</head>
+<body>
+<form method='GET' action="/sortPrint">
+    <label for="sort">Sort By:</label>
+    <select id="sort" name="sort">
+        <option value ="category">Category</option>
+        <option value ="name">Name</option>
+        <option value ="asset">Asset Number</option>
+        <option value ="location">Location</option>
+    </select>
+    <input type="submit">
+</form>
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="column">CATEGORY</div>
+        <div class="column">NAME</div>
+        <div class="column">ASSET NUMBER</div>
+        <div class="column">LOCATION</div>
+        <div class="column">COUNT</div>
+    </div>
+    <hr class="solid">
+    <% data.forEach(entry => { %>
+        <div class="row">
+            <div class="column"><%= entry.category%></div>
+            <div class="column"><%= entry.name%></div>
+            <div class="column"><%= entry.asset%></div>
+            <div class="column"><%= entry.location%></div>
+            <div class="column"><%= entry.count%></div>
+        </div>
+    <%}) %>
+</div>
+</body>
+</html>
