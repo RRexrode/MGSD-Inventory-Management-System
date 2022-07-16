@@ -4,48 +4,19 @@ var app = express()
 const port = 3000
 const bp = require('body-parser')
 const nodemailer = require('nodemailer')
-const puppeteer = require('puppeteer')
-const fs = require('fs/promises')
-const oneDay = 1000 * 60 * 60 * 24;
-const {readFileSync, promises: fsPromises} = require('fs');
-const cookieParser = require("cookie-parser");
-
-const transporter = nodemailer.createTransport({
-    service: process.env.service,
-    auth: {
-        user: process.env.emailUser,
-        pass: process.env.emailPassword
-    }
-});
-
-var session = require('express-session');
-
-
-
-var con = mysql.createConnection({
-    host: process.env.host,
-    user: process.env.user,
-    password: process.env.password,
-    database: process.env.database
-});
-
-con.connect(function (err) {
-    if (err) throw err;
-    console.log("Connected!");
-});
-
-
-require('dotenv').config()
-
-app.set('view engine', 'ejs');
 app.use(bp.json())
 app.use(bp.urlencoded({extended: true}))
-app.use(express.static(__dirname + '/'));
+const puppeteer = require('puppeteer')
+const fs = require('fs/promises')
+const cookieParser = require("cookie-parser");
+var session = require('express-session');
+const oneDay = 1000 * 60 * 60 * 24;
+require('dotenv').config();
 
 app.use(session({
     secret: process.env.secret,
-    saveUninitialized: true,
-    cookie: {maxAge: oneDay},
+    saveUninitialized:true,
+    cookie: { maxAge: oneDay },
     resave: false
 }));
 
@@ -64,14 +35,39 @@ app.use(cookieParser());
 
 start()*/
 
+const transporter = nodemailer.createTransport({
+    service: process.env.service,
+    auth: {
+        user: process.env.emailUser,
+        pass: process.env.emailPassword
+    }
+});
 
 
-app.get('/logout', (req, res) => {
+var con = mysql.createConnection({
+    host: process.env.host,
+    user: process.env.user,
+    password: process.env.password,
+    database: process.env.database
+});
+
+app.use(express.static(__dirname + '/'));
+
+con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected!");
+});
+
+app.set('view engine', 'ejs');
+
+const {readFileSync, promises: fsPromises} = require('fs');
+
+app.get('/logout',(req,res) => {
     req.session.destroy();
     res.redirect('/login');
 });
 
-app.post('/user', function (request, response) {
+app.post('/user', function(request, response) {
     // Capture the input fields
     let username = request.body.username;
     let password = request.body.password;
@@ -80,13 +76,13 @@ app.post('/user', function (request, response) {
         var sql = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ?";
         var inserts = ['user', 'username', username, 'password', password]
         sql = mysql.format(sql, inserts)
-        con.query(sql, function (error, results, fields) {
+        con.query(sql, function(error, results, fields) {
             // If there is an issue with the query, output the error
             if (error) throw error;
             // If the account exists
             if (results.length > 0) {
-                session = request.session;
-                session.userid = request.body.username;
+                session=request.session;
+                session.userid=request.body.username;
                 console.log(request.session)
                 response.redirect('/')
             } else {
@@ -100,78 +96,78 @@ app.post('/user', function (request, response) {
     }
 });
 
-app.get('/login', (req, res) => {
-    session = req.session;
-    if (session.userid) {
+app.get('/login',(req,res) => {
+    session=req.session;
+    if(session.userid){
         res.redirect('/profile')
-    } else
+    }else
         res.render('login')
 });
 
 app.post('/inventoryOfficeUpdate', function (req, res) {
-    session = req.session;
+    session=req.session;
     var search = req.body.asset;
     var num = req.body.num;
-    if (session.userid) {
+    if(session.userid){
         if (num != "") {
             con.query('UPDATE office SET COUNT = "' + num + '"  WHERE asset = "' + search + '"', function (err, result) {
             });
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get('/officeInventory', (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         con.query('SELECT * FROM office', function (err, result) {
             if (err) throw err;
             res.render('officeInventory', {data: result});
         });
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/inventoryUpdate', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.body.asset;
         var num = req.body.num;
         if (num != "") {
             con.query('UPDATE dstcitem SET COUNT = "' + num + '"  WHERE asset = "' + search + '"', function (err, result) {
             });
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get('/inventory', (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         con.query('SELECT * FROM dstcitem', function (err, result) {
             if (err) throw err;
             res.render('inventory', {data: result});
         });
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/addOffice", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('addOffice')
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/uploadOffice', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var category = req.body.category
         var itemName = req.body.name;
         var itemLocation = req.body.location;
@@ -189,27 +185,27 @@ app.post('/uploadOffice', function (req, res) {
             res.send("Please fill in all fields!");
         }
         res.redirect('/addItem');
-    } else
+    }else
         res.render('login')
 
 
 });
 
 app.get('/officeItems', (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         con.query('SELECT * FROM office', function (err, result) {
             if (err) throw err;
             res.render('officeItems', {data: result});
         });
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/sortOfficePrint", function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var sort = req.query.sort;
 
         if (sort != "") {
@@ -222,14 +218,14 @@ app.get("/sortOfficePrint", function (req, res) {
         } else {
             res.send("Please provide item name");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/sortPrint", function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         if (sort != "") {
             var sql = 'SELECT * FROM dstcitem ORDER BY ' + sort + ''
             con.query(sql, function (err, result) {
@@ -240,7 +236,7 @@ app.get("/sortPrint", function (req, res) {
         } else {
             res.send("Please provide item name");
         }
-    } else
+    }else
         res.render('login')
     var sort = req.query.sort;
 
@@ -248,44 +244,44 @@ app.get("/sortPrint", function (req, res) {
 });
 
 app.get('/printOffice', (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         con.query('SELECT * FROM office', function (err, result) {
             if (err) throw err;
             res.render('printOffice', {data: result});
         });
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get('/printMode', (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         con.query('SELECT * FROM dstcitem', function (err, result) {
             if (err) throw err;
             res.render('printMode', {data: result});
         });
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get('/', (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         con.query('SELECT * FROM dstcitem', function (err, result) {
             if (err) throw err;
             res.render('index', {data: result});
         });
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/searchOffice", function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.query.name;
         if (search != "") {
             con.query('SELECT * FROM office WHERE name LIKE "%' + search + '%"', function (err, result) {
@@ -295,14 +291,14 @@ app.get("/searchOffice", function (req, res) {
         } else {
             res.send("Please provide item name");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/search", function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.query.name;
         if (search != "") {
             con.query('SELECT * FROM dstcitem WHERE name LIKE "%' + search + '%"', function (err, result) {
@@ -312,14 +308,14 @@ app.get("/search", function (req, res) {
         } else {
             res.send("Please provide item name");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/searchAsset", function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.query.asset;
 
         if (search != "") {
@@ -331,23 +327,23 @@ app.get("/searchAsset", function (req, res) {
         } else {
             res.send("Please provide asset number");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/additem", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('additem')
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/uploadItem', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var category = req.body.category
         var itemName = req.body.name;
         var itemLocation = req.body.location;
@@ -365,23 +361,23 @@ app.post('/uploadItem', function (req, res) {
             res.send("Please fill in all fields!");
         }
         res.redirect('/addItem');
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/updateOffice", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('updateOffice')
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/changeOffice', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.body.asset;
         var num = req.body.num;
         var tempName = req.body.name;
@@ -435,23 +431,23 @@ app.post('/changeOffice', function (req, res) {
             });
         }
         res.redirect('/updateOffice');
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/updateItem", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('updateItem')
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/changeCount', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.body.asset;
         var num = req.body.num;
         var tempName = req.body.name;
@@ -505,22 +501,22 @@ app.post('/changeCount', function (req, res) {
             });
         }
         res.redirect('/');
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/quickOfficeAdd", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('quickOfficeAdd')
-    } else
+    }else
         res.render('login')
 });
 
 app.post('/addOffice', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.body.asset;
         if (search != "") {
             con.query('UPDATE office SET COUNT = COUNT + 1  WHERE asset = "' + search + '"', function (err, result) {
@@ -530,23 +526,23 @@ app.post('/addOffice', function (req, res) {
         } else {
             res.send("Please provide asset number");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/quickAdd", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('quickAdd')
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/addOne', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.body.asset;
         if (search != "") {
             con.query('UPDATE dstcitem SET COUNT = COUNT + 1  WHERE asset = "' + search + '"', function (err, result) {
@@ -556,23 +552,23 @@ app.post('/addOne', function (req, res) {
         } else {
             res.send("Please provide asset number");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/quickOfficeTake", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('quickOfficeTake')
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/takeOffice', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.body.asset;
 
         if (search != "") {
@@ -601,23 +597,23 @@ app.post('/takeOffice', function (req, res) {
         } else {
             res.send("Please provide asset number");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/quickTake", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('quickTake')
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/takeOne', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.body.asset;
 
         if (search != "") {
@@ -646,23 +642,23 @@ app.post('/takeOne', function (req, res) {
         } else {
             res.send("Please provide asset number");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/deleteOffice", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('deleteOffice')
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/deleteOneOffice', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.body.asset;
         if (search != "") {
             con.query('DELETE FROM office WHERE asset = "' + search + '"', function (err, result) {
@@ -672,23 +668,23 @@ app.post('/deleteOneOffice', function (req, res) {
         } else {
             res.send("Please provide asset number");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/deleteItem", (req, res) => {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         res.render('deleteItem')
-    } else
+    }else
         res.render('login')
 
 });
 
 app.post('/delete', function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var search = req.body.asset;
         if (search != "") {
             con.query('DELETE FROM dstcitem WHERE asset = "' + search + '"', function (err, result) {
@@ -699,7 +695,6 @@ app.post('/delete', function (req, res) {
             res.send("Please provide asset number");
         }
 
-        // Pulls data from s0.txt and
         /*function syncReadFile(filename) {
             const contents = readFileSync(filename, 'utf-8');
 
@@ -716,14 +711,14 @@ app.post('/delete', function (req, res) {
             return arr;
         }
         syncReadFile('s0.txt')*/
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/sortOffice", function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var sort = req.query.sort;
 
         if (sort != "") {
@@ -736,14 +731,14 @@ app.get("/sortOffice", function (req, res) {
         } else {
             res.send("Please provide item name");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/sort", function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var sort = req.query.sort;
 
         if (sort != "") {
@@ -756,14 +751,14 @@ app.get("/sort", function (req, res) {
         } else {
             res.send("Please provide item name");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/showOfficeCategory", function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var tempValue = req.query.oneCategory;
 
         if (tempValue != "") {
@@ -775,14 +770,14 @@ app.get("/showOfficeCategory", function (req, res) {
         } else {
             res.send("Please provide item name");
         }
-    } else
+    }else
         res.render('login')
 
 });
 
 app.get("/showCategory", function (req, res) {
-    session = req.session;
-    if (session.userid) {
+    session=req.session;
+    if(session.userid){
         var tempValue = req.query.oneCategory;
 
         if (tempValue != "") {
@@ -794,7 +789,7 @@ app.get("/showCategory", function (req, res) {
         } else {
             res.send("Please provide item name");
         }
-    } else
+    }else
         res.render('login')
 
 });
